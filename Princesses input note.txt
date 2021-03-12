@@ -1,0 +1,24 @@
+/**
+1. firstName lastName;
+2. userName;
+3.  passWord;
+4.  city;
+5.  userId;
+6. numberFriends
+	list of friends;
+7. number Interests
+	list of interest
+*/
+Interest list:
+Interest Id, interest name
+1 Painting
+2 Gongfu
+3 Music 
+4 Dancing
+5 Magic
+6 Cooking
+7 Reading
+8 Traveling
+9 Pet care
+10 Art
+*/
