@@ -159,6 +159,11 @@ public class User {
 		User fri = new User(name);
 		return friends.search(fri, new NameComparator());
 	}
+
+	public void viewFriend(String name){
+		User friend = new User(name);
+		System.out.println(friends.search(friend, new NameComparator()));
+	}
 	
 	/**
 	* Accesses the interests of the user
@@ -242,6 +247,10 @@ public class User {
 			friends.insert(newFriend, new NameComparator());
 			return true;
 		}
+	}
+
+	public void removeFriend(User newFriend) {
+		friends.remove(newFriend, new NameComparator());
 	}
 	
 	
