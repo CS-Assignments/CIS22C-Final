@@ -1,3 +1,6 @@
+/** Course Project CS 22c
+*Autor: Chengyun Li
+*/
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.*;
@@ -6,120 +9,124 @@ public class UserInterface {
 	
 	public static void main(String[] args) throws IOException {
 
-		final int NUM_ACCOUNT = 100;
-		final  int NUM_USERS = 100;
-		final int NUM_INTEREST= 100;
-		 HashTable<UserAccount> userAccounts= new HashTable<>(NUM_ACCOUNT);
-		 HashTable<User> userNames = new HashTable<>(NUM_USERS);
-		 HashTable<Interest> interest = new HashTable<>(NUM_INTEREST);
-		 ArrayList<BST<User>> NewFriendByInterest = new ArrayList<BST<User>>();
+		final int NUM_ACCOUNT = 30;
+		final  int NUM_USERS = 30;
+		final int NUM_INTEREST= 20;
+		HashTable<UserAccount> userAccounts= new HashTable<>(NUM_ACCOUNT);
+		HashTable<User> userNames = new HashTable<>(NUM_USERS);
+		HashTable<Interest> interest = new HashTable<>(NUM_INTEREST);
+		ArrayList<BST<User>> NewFriendByInterest = new ArrayList<BST<User>>();
+		ArrayList<String> outputNames = new ArrayList<>();
+		for(int i = 0; i < NUM_INTEREST; i++) {
+			NewFriendByInterest.add(new BST<User>());
+		}
 		 
-		File file = new File("Prin.txt");
+		File file = new File("Princesses.txt");
 		//reading input file
 		try {
-			BufferedReader buff = new BufferedReader(new FileReader(file));
-			String s = "";
-			while ((s = buff.readLine()) != null) {
-				System.out.println("Chengyun s: " + s);
-				ArrayList<String> al = new ArrayList<>();
-
-				if(!(buff.readLine().isEmpty())) {
-					al.add(s);
+			Scanner input = new Scanner(file);
+			while (input.hasNextLine()) { 
+				String[] str = new String[35];
+				for(int i = 0; i < 35; i++) {
+					if (input.hasNextLine()) {
+						str[i] = input.nextLine();
+						if (str[i].isEmpty()) {
+							break;
+						}
+					}
 				}
-				else {
-					break;
-				} 
-				String[] name = al.get(0).split(" ", 2);
-				System.out.println("Chengyun name: " + name);
-				int friendNum = Integer.parseInt(al.get(5));
+				outputNames.add(str[0]);
+				String[] name = str[0].split(" ", 2);
+				int friendNum = Integer.parseInt(str[5]);
 				ArrayList<User> friendArray = new ArrayList<>();
 				ArrayList<Interest> userInterest = new ArrayList<>();
-				for(int i = 0; i < friendNum; i++) {
-					String[] friendName = al.get(i + 6).split(" ", 2);
-					User temp = new User(friendName[0], friendName[1]);
+				for(int h = 0; h < friendNum; h++) {
+					User temp = new User(str[h + 6]);
 					friendArray.add(temp);
 				}
-				
-				for(int i = 0; i < Integer.parseInt(al.get(6 + friendNum)); i++) {
-					String[] temp = al.get(i + friendNum + 7).split(" ", 2);
-					Interest inter = new Interest(temp[0], Integer.parseInt(temp[1]));				
+					
+				for(int j = 0; j < Integer.parseInt(str[6 + friendNum]); j++) {
+					
+					String[] temp = str[j + friendNum + 7].split("#", 2);
+					if(temp.length != 2) {
+						System.out.println("error: size of interest" + temp.length);
+					}
+					Interest inter = new Interest(temp[0], Integer.parseInt(temp[1]));
+					
+					userInterest.add(inter);
 				}
-				
-				User user = new User(name[0], name[1],al.get(1), al.get(2), Integer.parseInt(al.get(3)), al.get(4), friendArray, userInterest);
-				System.out.println("Chengyun user: " + user);
-				for(int i = 0; i < user.getInterest().length; i++) {
-					Interest[] temp = user.getInterest();
-					NewFriendByInterest.get(temp[i].getID()).insert(user, new NameComparator());
-					if(!(interest.contains(temp[i]))){
-						interest.put(temp[i]);
+				User user = new User(name[0], name[1],str[1], str[2], str[3], Integer.parseInt(str[4]),  friendArray, userInterest);
+				Interest[] temp = user.getInterest();
+				for(int i = 0; i < temp.length; i++) {
+				}
+				for(int k = 0; k < temp.length; k++) {
+					int index = temp[k].getID();
+					NewFriendByInterest.get(index).insert(user, new NameComparator());					
+					if(!(interest.contains(temp[k]))){
+						interest.put(temp[k]);
 					}
 				}
 				UserAccount userAccount = new UserAccount(user);
 				userNames.put(user);
-				userAccounts.put(userAccount);
-			}
-			
-	    buff.close();
+				userAccounts.put(userAccount);	
+		}	
+		input.close();
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
-		//System.out.println("Chengyun userAccounts: " + userAccounts);
-		//System.out.println("Chengyun userNames: " + userNames);
-		//System.out.println("Chengyun NewFriendByInterest: " + NewFriendByInterest);
-		
-
+		writeFile("updatedPrincesses.txt", userNames, outputNames);
 	}
-
-	/**
-	* Read all user's data from txt file 
-	* @param File the data source 
-	*/
-	/**	
-	public static void readIn(File file,  HashTable<UserAccount> userAccounts, HashTable<User> userNames) throws FileNotFoundException {		
-		try {
-			BufferedReader buff = new BufferedReader(new FileReader(file));
-			String s = "";
-			while ((s = buff.readLine()) != null) {
-				ArrayList<String> al = new ArrayList<>();
-
-				if(!(buff.readLine().isEmpty())) {
-					al.add(s);
-				}
-				else {
-					break;
-				} 
-				String[] name = al.get(0).split(" ", 2);
-				int friendNum = Integer.parseInt(al.get(5)) * 5;
-				ArrayList<User> friendArray = new ArrayList<>();
-				ArrayList<Interest> userInterest = new ArrayList<>();
-				for(int i = 0; i < friendNum; i = i + 5) {
-					String[] friendName = al.get(i + 6).split(" ", 2);
-					User temp = new User(friendName[0], friendName[1], al.get(i + 7),al.get(i + 8), Integer.parseInt(al.get(i + 9)), al.get(i + 10));
-					friendArray.add(temp);
-				}
-				
-				for(int i = 0; i < Integer.parseInt(al.get(4 + 1 + friendNum)); i++) {
-					Interest inter = new Interest(al.get(Integer.getInteger(al.get(4 + 1 + friendNum + 1))));
-					
-				}
-				
-				User user = new User(name[0], name[1],al.get(1), al.get(2), Integer.parseInt(al.get(3)), al.get(4), friendArray, userInterest);
-				for(int i = 0; i < user.getInterest().length; i++) {
-					if()
-				}
-				UserAccount userAccount = new UserAccount(user);
-				userNames.put(user);
-				userAccounts.put(userAccount);
-			}
-			
-	    buff.close();
-		}catch (IOException e) {
-			e.printStackTrace();
-		}	
+	
+    public static void writeFile(String fileName, HashTable<User> userNames, ArrayList<String> outputNames){
+        try {
+            PrintWriter out = new PrintWriter(fileName);
+            for(int i = 0; i < outputNames.size(); i++) {
+            	User user = new User(outputNames.get(i));
+            	User outUser = userNames.get(user);
+            	String name = outUser.getFirstName() + " " + outUser.getLastName();
+            	out.println(name);
+            	String userName = outUser.getUserName();
+            	out.println(userName);
+            	String password = outUser.getPassword();
+            	out.println(password);
+            	String city = outUser.getCity();
+            	out.println(city);
+            	int userId = outUser.getUserId();
+            	out.println(userId);
+            	int numFriends = outUser.getNumFriends();
+            	out.println(numFriends);
+            	// add name of User' friend
+            	String friendNames = outUser.getAllFriendName();
+            	out.print(friendNames);
+            	
+            	int numInterests = outUser.getNumInterests();
+            	out.println(numInterests);
+            	String interests = "";
+            	for(int j = 0; j < outUser.getInterest().length; j++) {
+            	 	interests += outUser.getInterest()[j].getName() + "#" + outUser.getInterest()[j].getID() + "\n";
+            	}
+            	out.print(interests);
+            	out.println("");
+            }
+            
+           // System.out.println(userNames.g);
+            out.flush();
+            out.close();
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+ /**   
+	public static void menu() {
+		System.out.println("\nA. Login\n");
+		System.out.println("B. View My Friends (has sub-menu)");
+		System.out.println("C. Search for a New Friend (has sub-menu)");
+		System.out.println("D. Get Friend Recommendations (has sub-menu)");
+		System.out.println("E. Quit and Write Records to a File");
+		System.out.println();
 	}
 */
-/**	
-	public static void WriteFile(File file) {
+	public static void optionD(User user, HashTable<User> userNames, HashTable<UserAccount> userAccount) {
 		
 	}
 	
@@ -156,14 +163,6 @@ public class UserInterface {
 		return userAccount;
 	}
 	
-	public static void menu() {
-		System.out.println("\nA. Login\n");
-		System.out.println("B. View My Friends (has sub-menu)");
-		System.out.println("C. Search for a New Friend (has sub-menu)");
-		System.out.println("D. Get Friend Recommendations (has sub-menu)");
-		System.out.println("E. Quit and Write Records to a File");
-		System.out.println();
-	}
 	
 	public static void OptionB(User user) {
 		Scanner input = new Scanner(System.in);
