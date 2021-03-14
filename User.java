@@ -1,8 +1,13 @@
+/**
+ * Interest.java
+ * @author Chengyun Li Group 2 
+ * CIS 22C, Final Project
+ */
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-// name: Chengyun Li
 
 public class User {
 	private String firstName;
@@ -77,7 +82,7 @@ public class User {
 	* @param fri the friends owned by this User
 	* @param inter the interests owned by this User
 	*/
-	public User(String firstName, String lastName, String userName, String password, int userId, String city, ArrayList<User> alUser, ArrayList<Interest> alInterest) {
+	public User(String firstName, String lastName, String userName, String password, String city, int userId, ArrayList<User> alUser, ArrayList<Interest> alInterest) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.userName = userName;
@@ -149,6 +154,21 @@ public class User {
 	public boolean passwordMatch(String anotherPassword) { 
 		return password.equals(anotherPassword); 
 	}
+	/**
+	 * Accesses the user's number of friends
+	 * @return number of friends of the user
+	 */
+	public int getNumFriends() {
+		return friends.getSize();
+	}
+	
+	/**
+	 * Accesses the user's number of interests
+	 * @return number of interests of the user
+	 */
+	public int getNumInterests() {
+		return getInterest().length;
+	}
 	
 	/**
 	* Accesses a specific friend
@@ -159,22 +179,37 @@ public class User {
 		User fri = new User(name);
 		return friends.search(fri, new NameComparator());
 	}
-
-	public void viewFriend(String name){
-		User friend = new User(name);
-		System.out.println(friends.search(friend, new NameComparator()));
+	
+	/**
+	* Accesses a specific friend
+	* @param name the friend name
+	* @return the specified friend 
+	*/
+	public String getAllFriendName() {
+		String names = "";
+		ArrayList<User> str = friends.getNodes();
+		if(str == null) {
+			return "";
+		}
+		else{
+			for(int i = 0; i <str.size(); i++) {
+				names += str.get(i).getFirstName() + " " + str.get(i).getLastName() + "\n";	
+			}
+		}
+		return names;
 	}
+	
 	
 	/**
 	* Accesses the interests of the user
 	* @param name user
-	* @return the specified friend 
+	* @return all the interests of this user
 	*/
-	public String getInterest() {
-		String inter = "";
+	public Interest[] getInterest() {
+		Interest[] inter = new Interest[interests.getLength()];
 		interests.placeIterator();
 		for(int i = 0; i < interests.getLength(); i++) {
-			inter += interests.getIterator().getName() + " ";
+			inter[i] = interests.getIterator();
 			interests.advanceIterator();	
 		}
 		return inter;
@@ -222,6 +257,7 @@ public class User {
 		this.city = city;
 	}
 	
+	
 	/**
 	* Remove a friend from friend list
 	* @param name the name of the friend 
@@ -247,10 +283,6 @@ public class User {
 			friends.insert(newFriend, new NameComparator());
 			return true;
 		}
-	}
-
-	public void removeFriend(User newFriend) {
-		friends.remove(newFriend, new NameComparator());
 	}
 	
 	
@@ -279,7 +311,10 @@ public class User {
 	@Override public String toString() {
 		String name = "name: " + this.getFirstName() + " " + this.getLastName() + "\n";
 		String city = "city: " + this.getCity() + "\n";
-		String inter = "List of interests: " + this.getInterest();
+		String inter = "List of Interests: ";
+		for(int i = 0; i < this.getInterest().length; i++) {
+			inter += this.getInterest()[i].getName() + " ";
+		}
 		return name + city + inter;
 	}
 	/**
