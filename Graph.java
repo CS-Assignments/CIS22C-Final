@@ -10,7 +10,8 @@ import java.util.ArrayList;
 public class Graph {
     private int vertices;
     private int edges;
-    private ArrayList<List<Integer> > adj;
+    private ArrayList<User> user;
+    private ArrayList<List<Integer>> adj;
     private ArrayList<Character> color;
     private ArrayList<Integer> distance;
     private ArrayList<Integer> parent;
@@ -25,6 +26,7 @@ public class Graph {
     public Graph(int n) {
         this.vertices = n;
         this.edges = 0;
+        this.user = new ArrayList<User>();
         this.adj = new ArrayList<List<Integer>>();
         this.color = new ArrayList<Character>();
         this.distance = new ArrayList<Integer>();
